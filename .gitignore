@@ -1,0 +1,95 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+*config.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build outputs
+dist/
+build/
+*.log
+
+
+# Config (if contains sensitive data)
+# config.yaml
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+
+.pytest_cache/
+.ruff_cache/
+*.tsbuildinfo
+
+# Non-secret test fixture is part of the regression suite.
+!tests/fixtures/config.yaml
+
+.docker/
+.ci-library/
+.build/
+pytest.xml
+image.env
+image-bundle.tsv
+
+image-reference.txt
+
+# Agent working reports
+/anti-slop/
+
+# Local credentials, caches and generated previews
+.env.*
+!.env.example
+.artifacts/
+anti-slop/
+graphify-out/
+pki/
+*.key
+*.pem
