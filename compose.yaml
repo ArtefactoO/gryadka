@@ -1,0 +1,40 @@
+name: gryadka-local
+x-runtime: &runtime
+  image: gryadka:local
+  build:
+    context: .
+    dockerfile: deploy/Dockerfile
+  environment:
+    CONFIG_PATH: /app/config.yaml
+    JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env to at least 32 characters}
+    AUTH_USER_ADMIN_PASSWORD: ${AUTH_USER_ADMIN_PASSWORD:?Set a local admin password in .env}
+    REDIS_HOST: redis
+    REDIS_DB: "0"
+    PUBLIC_BASE_URL: http://localhost:8082
+  volumes:
+    - ./config.example.yaml:/app/config.yaml:ro
+  read_only: true
+  tmpfs: [/tmp]
+  depends_on:
+    redis:
+      condition: service_healthy
+services:
+  app:
+    <<: *runtime
+    ports: ["127.0.0.1:8082:8082"]
+  worker:
+    <<: *runtime
+    command: [celery, -A, app.services.celery_app, worker, --loglevel=info, --concurrency=2, -Q, "mongodb,rabbitmq,redis,haproxy,redpanda,elasticsearch,emqx,rollouts,addresses,kafka,postgresql"]
+  beat:
+    <<: *runtime
+    command: [celery, -A, app.services.celery_app, beat, --loglevel=info, --schedule=/tmp/celerybeat-schedule]
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --save, "", --appendonly, "no"]
+    read_only: true
+    tmpfs: [/data, /tmp]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 2s
+      retries: 20

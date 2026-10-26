@@ -1,0 +1,14 @@
+{
+  "workspaces": {
+    ".": {
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "packages/project-ui": {
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    }
+  }
+}

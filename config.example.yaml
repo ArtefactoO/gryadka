@@ -1,0 +1,14 @@
+updateIntervalS: 15
+serverSelectionTimeoutMS: 2000
+auth:
+  provider: local
+  allow_local_fallback: true
+users:
+  - username: admin
+    roles: [admin]
+redis:
+  - name: local-redis
+    nodes:
+      - host: redis:6379
+    options:
+      mode: direct

@@ -1,0 +1,32 @@
+updateIntervalS: 15
+serverSelectionTimeoutMS: 2000
+auth:
+  provider: local
+users:
+  - username: viewer
+    roles: [viewer]
+  - username: operator
+    roles: [viewer, redis-rw, rabbitmq-rw, postgresql-hba]
+  - username: admin
+    roles: [admin]
+mongodb:
+  - name: local-mongo
+    nodes:
+      - host: mongodb:27017
+rabbitmq:
+  - name: local-rabbit
+    nodes:
+      - host: rabbitmq:15672
+redis:
+  - name: local-redis
+    nodes:
+      - host: redis:6379
+    options:
+      mode: direct
+postgresql:
+  - name: test
+    nodes:
+      - host: postgresql:5432
+    options:
+      database: postgres
+      sslmode: disable

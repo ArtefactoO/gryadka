@@ -1,0 +1,45 @@
+name: CI
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  frontend:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: >-
+          docker run --rm -v "$PWD/frontend:/app" -w /app node:22-bookworm-slim
+          sh -c 'npm ci --ignore-scripts && npm run test:ui && npm run check:unused && npm run build'
+  backend:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: docker build -f deploy/Dockerfile -t gryadka:check .
+      - run: >-
+          docker run --rm --user 0 -v "$PWD/tests:/tests:ro" -w /app gryadka:check
+          sh -c 'pip install --no-cache-dir pytest pytest-asyncio && pytest -q -p no:cacheprovider /tests'
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: >-
+          docker run --rm -v "$PWD:/src:ro" zricethezav/gitleaks:v8.24.3
+          dir /src --no-banner --redact
